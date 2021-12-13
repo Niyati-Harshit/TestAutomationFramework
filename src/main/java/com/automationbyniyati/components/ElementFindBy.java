@@ -1,17 +1,26 @@
 package com.automationbyniyati.components;
 
+import com.automationbyniyati.properties.PropertiesLoader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ElementFindBy
 {
     WebDriver driver;
+    WebDriverWait wait;
+
     public ElementFindBy(WebDriver driver)
     {
         this.driver = driver;
+        wait = new WebDriverWait(this.driver,PropertiesLoader.explicitWaitTime);
     }
 
     public By findBy(String element) throws IOException,Exception
@@ -62,6 +71,40 @@ public class ElementFindBy
     public WebElement findElementBy(String element) throws Exception
     {
         By by = findBy(element);
-        return driver.findElement(by);
+        return waitUntilElementVisible(by);
+//        Wait wait = new WebDriverWait(driver, PropertiesLoader.explicitWaitTime);
+//        wait.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
+//        return driver.findElement(by);
     }
+
+    public List<WebElement> findElementsBy(String element) throws Exception
+    {
+        By by =findBy(element);
+        return waitUntilAllElementVisible(by);
+    }
+
+    public List<WebElement> waitUntilAllElementVisible(By by) throws Exception
+    {
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
+    }
+
+    public WebElement waitUntilElementVisible(By by) throws Exception
+    {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+    }
+
+    public boolean waitUntilElementDisappears(By by) throws Exception
+    {
+        return wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
+    }
+
+     public WebElement waitUntilElementFound(By by) throws Exception
+     {
+        return wait.until(ExpectedConditions.presenceOfElementLocated(by));
+     }
+
+     public WebElement waitUntilClickable(By by) throws Exception
+     {
+         return wait.until(ExpectedConditions.elementToBeClickable(by));
+     }
 }
